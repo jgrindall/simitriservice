@@ -3,22 +3,115 @@
 <html>  
 	<head> 
 	
-		<title>logotacular</title> 
+		<title>Simitri service</title> 
 		
+		<link rel="stylesheet" href="css/styles.css">
 		
-		<link rel="stylesheet" 						href="css/web/styles.css">
-		
+		<script src = "libs/jquery.min.js"></script>
+		<script src = "libs/json2.js"></script>
+		<script src = "libs/underscore-1.4.4.js"></script>
 		
 	</head>
-	
 	
 	<body>
 		
 		<div id="container">
-			<a href="/app">Click</a>
+			
+			<a id="load" href="#">Load</a>
 		</div>
 		
+		
+		<div id="list">
+			<table>
+				<thead><tr><td>id</td><td>modified</td><td>country</td><td>dNum</td><td>img</td><td>active</td><td>actions</td></tr></thead>
+				<tbody></tbody>
+			</table>
+		</div>
+		
+		<script>
+			
+			var activateSuccess = function(data){
+				if(data.success){
+					alert("activated, reloading");
+					window.location.reload(true);
+				}
+				else{
+					alert("failed to activate");
+				}
+			};
+			
+			var activateError = function(){
+				alert("activate error");
+			};
+			
+			var sendActivate = function(_id, activate){
+				$.ajax({
+  					data:{"_id":_id, "activate":activate},
+  					type: "POST",
+  					url: "/activate",
+ 			 		success: activateSuccess,
+ 			 		error: activateError,
+  					dataType: "json"
+				});
+			};
+			
+			var displayData = function(data){
+				$("#list tbody").empty();
+				$.each(data.files, function(key, obj){
+					var src = "/thumbs/thumb_"+obj._id+".png";
+					var actions = "";
+					if(!obj.active){
+						actions = "<button class='activate' data-isactive='0' data-id='"+obj._id+"'>Activate</button>";
+					}
+					else{
+						actions = "<button class='deactivate' data-isactive='1' data-id='"+obj._id+"'>Deactivate</button>";
+					}
+					$("#list tbody").append("<tr><td>"+obj._id+"</td><td>"+obj.modified+"</td><td>"+obj.country+"</td><td>"+obj.drawerNum+"</td><td><img class='thumb' src='"+src+"'/></td><td>"+obj.active+"</td><td>"+actions+"</td></tr>");
+				});
+			};
+			
+			var addListeners = function(){
+				$("button").click(function(e){
+					var _id = $(e.currentTarget).data("id");
+					var isActive = parseInt($(e.currentTarget).data("isactive"), 10);
+					if(!isNaN(isActive)){
+						var activate = (isActive == 0);
+						sendActivate(_id, activate);
+					}
+				});
+			};
+			
+			var loadSuccess = function(data){
+				if(data.success){
+					displayData(data);
+					addListeners();
+				}
+			};
+			
+			var loadError = function(){
+				alert("error loading data");
+			};
+			
+			var loadData = function(){
+				$.ajax({
+  					type: "GET",
+  					url: "/list",
+ 			 		success: loadSuccess,
+ 			 		error: loadError,
+  					dataType: "json"
+				});
+			};
+			
+			$("a#load").click(function(){
+				loadData();
+			});
+			
+			$("document").ready(function(){
+				loadData();
+			});
+			
+		</script>
+		
 	</body>
-	
 	
 </html>
