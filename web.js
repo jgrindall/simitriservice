@@ -8,7 +8,7 @@ exec = require('child_process').exec;
 fs = require('fs');
 mkdirp = require('mkdirp');
 mongoose = require('mongoose');
-maxFiles = 2;
+maxFiles = 20;
 minFiles = 2;
 mongoUri = process.env.MONGOLAB_URI || 'mongodb://localhost/simitriservice'; 
 
