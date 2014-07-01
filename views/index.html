@@ -91,7 +91,7 @@
 					else{
 						actions = "<button class='del deactivate' data-isactive='1' data-id='"+obj._id+"'>Deactivate</button>";
 					}
-					var del = "<button class='delete' data-id='"+obj._id+"'>Delete</button>";
+					var del = "<button class='del' data-id='"+obj._id+"'>Delete</button>";
 					$("#list tbody").append("<tr><td>"+obj._id+"</td><td>"+obj.modified+"</td><td>"+obj.country+"</td><td>"+obj.drawerNum+"</td><td><img class='thumb' src='"+src+"'/></td><td>"+obj.active+"</td><td>"+actions+"</td><td>"+del+"</td></tr>");
 				});
 			};
