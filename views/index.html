@@ -83,7 +83,7 @@
 			var displayData = function(data){
 				$("#list tbody").empty();
 				$.each(data.files, function(key, obj){
-					var src = "/thumbs/thumb_"+obj._id+".png";
+					var src = "http://s3.amazonaws.com/com.jgrindall.simitrithumbs/thumb_"+obj._id+".png";
 					var actions = "";
 					if(!obj.active){
 						actions = "<button class='action activate' data-isactive='0' data-id='"+obj._id+"'>Activate</button>";

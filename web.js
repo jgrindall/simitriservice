@@ -1,8 +1,11 @@
 var express, app, port, exec, fs, mkdirp, mongoose, nodemailer, smtpTransport;
-var File, FileSchema, saveImage, mongoUri, maxFiles, minFiles, activate;
+var File, FileSchema, saveImage, mongoUri, maxFiles, minFiles, activate, AWS, s3Explorer;
 
 express = require("express");
 nodemailer = require("nodemailer");
+AWS = require('aws-sdk'); 
+AWS.config.loadFromPath('./aws.json');
+s3Explorer = new AWS.S3(); 
 
 smtpTransport = nodemailer.createTransport("SMTP",{
     service: "Gmail",
@@ -127,24 +130,21 @@ app.get('/files', function(req, res){
 });
 
 saveImage = function(id, base64, options){
-	mkdirp('./public/thumbs', function(err) { 
-		if(err){
-			console.log('makeThumbs error: ' + err);
-			options.error(err);
-			return;
+	var rnd = Math.floor(Math.random()*1000);
+	var body = new Buffer(base64, 'base64');
+	var params = {
+		Bucket: 'com.jgrindall.simitrithumbs',
+		Key: 'thumb_'+id+'.png',
+		Body: body
+	};
+	s3Explorer.putObject(params, function (error, response) {
+		if (error) {
+			console.log("aws error "+error);
+			options.error("Error uploading data: " + error);
 		}
-		else{
-			fs.writeFile("./public/thumbs/thumb_"+id+".png", base64, 'base64', function(err) {
-				if(err){
-					console.log("writeFile "+err);
-					options.error(err);
-					return;
-				}
-				else{
-					options.success();
-					return;
-				}
-			});
+		else {
+			console.log("aws ok");
+			options.success();
 		}
 	});
 };
