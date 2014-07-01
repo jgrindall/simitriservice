@@ -118,6 +118,23 @@ saveImage = function(id, base64, options){
 	});
 };
 
+app.del('/delete', function(req, res){
+	var _id = req.param("_id", null);
+	console.log("deleting "+_id);
+	File.findById(_id, function (err, file) {
+    	file.remove(function (err) {
+      		if (err) {
+        		console.log("error removing");
+        		res.send(400);
+				return;
+      		} 
+      		else {
+        		res.send({"success":"true"});
+      		}
+    	});
+  	});
+});
+
 app.post('/activate', function(req, res){
 	var _id = req.param("_id", null);
 	var activate = req.param("activate", false);
