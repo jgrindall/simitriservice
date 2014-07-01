@@ -1,7 +1,17 @@
-var express, app, port, exec, fs, mkdirp, mongoose;
+var express, app, port, exec, fs, mkdirp, mongoose, nodemailer, smtpTransport;
 var File, FileSchema, saveImage, mongoUri, maxFiles, minFiles, activate;
 
 express = require("express");
+nodemailer = require("nodemailer");
+
+smtpTransport = nodemailer.createTransport("SMTP",{
+    service: "Gmail",
+    auth: {
+        user: "simitriapp@gmail.com",
+        pass: "simitrielperro2!"
+    }
+});
+
 app = express();
 port = Number(process.env.PORT || 5000);
 exec = require('child_process').exec;
@@ -22,6 +32,40 @@ FileSchema = new mongoose.Schema({
 });
 
 File = mongoose.model("File", FileSchema);
+
+var countActiveFiles = function(options){
+	console.log("count active");
+	File.find({"active":true}).count(function(err, count){
+		if(err){
+			console.log("err "+err);
+			options.fail();
+		}
+		else{
+			options.success(count);
+		}
+	});
+};
+
+var sendEmailToMe = function(_id, options){
+	var text = "Review: " + _id;
+	var mailOptions = {
+		from: "simitriapp@gmail.com",
+		to: "simitriapp@gmail.com",
+		subject: "File submitted to Simitri gallery",
+		text: text
+	};
+	if(smtpTransport){
+		smtpTransport.sendMail(mailOptions, function(error, response){
+			if(error){
+				options.error(error);
+			}
+			else{
+				options.success();
+			}
+			smtpTransport.close();
+		});
+	}
+};
 
 app.configure(function(){
 	app.use(express.static(__dirname+"/public"));
@@ -49,19 +93,6 @@ app.get('/list', function(req, res){
 		}
 	});
 });
-
-var countActiveFiles = function(options){
-	console.log("count active");
-	File.find({"active":true}).count(function(err, count){
-		if(err){
-			console.log("err "+err);
-			options.fail();
-		}
-		else{
-			options.success(count);
-		}
-	});
-};
 
 app.get('/files', function(req, res){
 	countActiveFiles({
@@ -159,7 +190,6 @@ app.post('/files', function(req, res){
 	console.log("posting...");
 	var country, latitude, longitude, description, imgData, drawerNum;
 	country = req.param("country", null);
-	console.log("country "+country);
 	latitude = req.param("latitude", null);
 	drawerNum = req.param("drawerNum", null);
 	longitude = req.param("longitude", null);
@@ -175,8 +205,16 @@ app.post('/files', function(req, res){
 			console.log("posted with "+doc._id);
 			saveImage(doc.id, imgData, {
 				"success":function(){
-					console.log("ok! posted");
-					res.send({"success":true});
+					console.log("ok! posted, sending email");
+					sendEmailToMe(doc._id, {
+						"success":function(){
+							res.send({"success":true});
+						},
+						"error":function(error){
+							console.log("error "+error);
+							res.send({"success":true});
+						}
+					});
 				},
 				"error":function(err){
 					res.send(400);
