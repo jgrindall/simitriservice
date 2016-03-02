@@ -73,7 +73,15 @@ var sendEmailToMe = function(_id, options){
 app.configure(function(){
 	app.use(express.static(__dirname+"/public"));
 	app.use(express.bodyParser());
-	mongoose.connect(mongoUri);
+	mongoose.connect(mongoUri, function(err, res){
+		console.log ('result ', err, res);
+		if (err) {
+		    console.log ('ERROR connecting to: ' + mongoUri + '. ' + err);
+		  }
+		  else {
+		    console.log ('Succeeded connected to: ' + mongoUri);
+		  }
+	});
 	app.use(express.basicAuth(function(user, pass) {
  		return user === 'symmUserName' && pass === 'symmPassword';
 	}));
