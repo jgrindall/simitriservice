@@ -70,22 +70,21 @@ var sendEmailToMe = function(_id, options){
 	}
 };
 
-app.configure(function(){
-	app.use(express.static(__dirname+"/public"));
-	app.use(express.bodyParser());
-	mongoose.connect(mongoUri, function(err, res){
-		console.log ('result ', err, res);
-		if (err) {
-		    console.log ('ERROR connecting to: ' + mongoUri + '. ' + err);
-		  }
-		  else {
-		    console.log ('Succeeded connected to: ' + mongoUri);
-		  }
-	});
-	app.use(express.basicAuth(function(user, pass) {
- 		return user === 'symmUserName' && pass === 'symmPassword';
-	}));
+app.use(express.static(__dirname+"/public"));
+app.use(express.bodyParser());
+app.use(express.basicAuth(function(user, pass) {
+		return user === 'symmUserName' && pass === 'symmPassword';
+}));
+mongoose.connect(mongoUri, function(err, res){
+	console.log ('result ', err, res);
+	if (err) {
+	    console.log ('ERROR connecting to: ' + mongoUri + '. ' + err);
+	  }
+	  else {
+	    console.log ('Succeeded connected to: ' + mongoUri);
+	  }
 });
+
 
 app.get('/', function(req, res){
 	res.render("index.jade");
