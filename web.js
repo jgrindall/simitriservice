@@ -3,9 +3,9 @@ var File, FileSchema, saveImage, mongoUri, maxFiles, minFiles, activate, AWS, s3
 
 express = require("express");
 nodemailer = require("nodemailer");
-AWS = require('aws-sdk'); 
+AWS = require('aws-sdk');
 AWS.config.loadFromPath('./aws.json');
-s3Explorer = new AWS.S3(); 
+s3Explorer = new AWS.S3();
 
 smtpTransport = nodemailer.createTransport("SMTP",{
     service: "Gmail",
@@ -23,7 +23,7 @@ mkdirp = require('mkdirp');
 mongoose = require('mongoose');
 maxFiles = 20;
 minFiles = 2;
-mongoUri = process.env.MONGOLAB_URI || 'mongodb://localhost/simitriservice'; 
+mongoUri = process.env.MONGOLAB_URI || 'mongodb://localhost/simitriservice';
 
 FileSchema = new mongoose.Schema({
 	"country"		:	{"type":String},
@@ -158,7 +158,7 @@ app.del('/delete', function(req, res){
         		console.log("error removing");
         		res.send(400);
 				return;
-      		} 
+      		}
       		else {
         		res.send({"success":"true"});
       		}
@@ -219,7 +219,7 @@ app.post('/files', function(req, res){
 				"error":function(err){
 					res.send(400);
 				}
-			}); 
+			});
 		}
 	});
 });
