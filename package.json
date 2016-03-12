@@ -1,0 +1,20 @@
+{
+  "name": "simitriservice",
+  "version": "0.0.0",
+  "description": "simitriservice",
+  "main": "web.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "jgrindall",
+  "license": "BSD",
+  "dependencies": {
+    "express": "latest",
+    "jade": "latest",
+    "mkdirp": "latest",
+    "mongoose": "latest",
+    "nodemailer":"latest",
+    "aws-sdk":"latest",
+    "body-parser":"latest"
+  }
+}
