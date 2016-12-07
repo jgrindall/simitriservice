@@ -4,7 +4,6 @@ var File, FileSchema, saveImage, mongoUri, maxFiles, minFiles, activate, AWS, s3
 express = require("express");
 nodemailer = require("nodemailer");
 AWS = require('aws-sdk');
-AWS.config.loadFromPath('./aws.json');
 s3Explorer = new AWS.S3();
 
 smtpTransport = nodemailer.createTransport("SMTP",{
